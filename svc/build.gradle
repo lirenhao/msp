@@ -1,0 +1,68 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '2.2.4.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+}
+
+group = 'com.yada.ssp'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+repositories {
+    mavenCentral()
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:Hoxton.SR2"
+    }
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    runtimeOnly 'org.springframework.boot:spring-boot-devtools'
+    runtimeOnly 'com.h2database:h2'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+tasks.register("copyApp") {
+    group("build")
+    description("copy webapp")
+    doLast {
+        copy {
+            from '../app/dist'
+            into 'src/main/resources/static/app'
+            exclude("index.html")
+        }
+    }
+    doLast {
+        copy {
+            from '../app/dist/index.html'
+            into 'src/main/resources/templates/app'
+        }
+    }
+}
+
+tasks.register("cleanApp") {
+    group("build")
+    description("clean webapp")
+    doLast {
+        delete "src/main/resources/static/app"
+    }
+}
+
+task("buildApp", type: Exec) {
+    workingDir("../app")
+    commandLine "npm", "run", "build"
+}
+
+task("buildAll") {
+    buildApp.mustRunAfter("cleanApp")
+    copyApp.mustRunAfter("buildApp")
+    bootJar.mustRunAfter("clean")
+    bootJar.mustRunAfter("copyApp")
+}.dependsOn("clean", "cleanApp", "bootJar", "buildApp", "copyApp")

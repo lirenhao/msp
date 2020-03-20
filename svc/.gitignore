@@ -1,0 +1,16 @@
+# Ignore Gradle project-specific cache directory
+.gradle
+
+# Ignore Gradle build output directory
+build
+logs
+
+.project
+.settings
+.idea
+.classpath
+*.iml
+out
+lombok.config
+src/main/resources/static/app
+src/main/resources/templates/app/index.html
