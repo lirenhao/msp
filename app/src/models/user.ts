@@ -49,6 +49,7 @@ const UserModel: UserModelType = {
     *fetchLogout(_, { call, put }) {
       try {
         yield call(getLogout);
+        
       } catch (error) {
         // TODO 获取商户信息失败
       }

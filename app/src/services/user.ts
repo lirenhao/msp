@@ -6,5 +6,5 @@ export async function getMerInfo(): Promise<any> {
 
 
 export async function getLogout(): Promise<any> {
-  return request('/api/msp/logout');
+  return request('/logout');
 }
