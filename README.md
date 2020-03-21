@@ -7,7 +7,15 @@
 
 ## 后台服务框架
 
-### 网关配置
+### 获取用户信息
+
+网关将用户的orgId、userId放到了用户request的header里，可以在controller中添加下列参数获取orgId、userId
+```
+@RequestHeader(value = "X-YADA-ORG-ID") String orgId
+@RequestHeader(value = "X-YADA-USER-ID") String userId
+```
+
+### 网关配置说明
 
 - 参数说明
 
@@ -18,7 +26,7 @@
   | svcId   | 网关中定义的svc的ID |
   | svcPath | 本项目中svc的上下文  |
 
-- 将服务添加到网关中,需要在网关服务中添加下列配置
+- 配置模版
   ```
   uri: http://${svcIp}:${svcPort}
   predicates:
@@ -28,7 +36,21 @@
     - RewritePath=/api/${svcId},/${svcPath}
   ```
 
+### 项目网关配置
+
+将服务添加到网关中,需要在网关服务中添加下列配置
+```
+uri: http://localhost:3012
+predicates:
+  - Svc=/api,msp
+filters:
+  - AuthApi
+  - RewritePath=/api/msp,/msp
+```
+
 ## 前端应用框架
+
+### 网关配置说明
 
 - 参数说明
 
@@ -38,7 +60,7 @@
   | appPort | 本项目中app的访问端口 |
   | appPath | 本项目中app的上下文  |
 
-- 将应用添加到网关中,需要在网关服务中添加下列配置
+- 配置模版
   ```
   uri: http://${appIp}:${appPort}
   predicates:
@@ -47,6 +69,19 @@
     - Auth
     - RewritePath=/${appId},/${appPath}
   ```
+
+### 项目网关配置
+
+将应用添加到网关中,需要在网关服务中添加下列配置
+```
+uri: http://localhost:3012
+predicates:
+  - App=/msp
+filters:
+  - Auth
+  - RewritePath=/msp,/msp/app
+```
+
 
 ## 运行访问
 
@@ -71,5 +106,5 @@
 
   浏览器打开下列地址访问应用
   ```
-  http://${gwIp}:${gwPort}/${appId}
+  http://localhost:8080/msp
   ```
