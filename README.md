@@ -88,7 +88,7 @@ filters:
 - 编译应用
 
   ```
-  cd app
+  cd svc
   gradle buildAll
   ```
 
